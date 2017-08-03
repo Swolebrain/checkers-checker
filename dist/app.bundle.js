@@ -89,7 +89,7 @@ console.log("hi");
 
 (0, _preLoader2.default)().then(function (fileContents) {
   for (var fileName in fileContents) {
-    testCases[fileName] = (0, _buildMoveList2.default)(fileContents[fileName], "black");
+    testCases[fileName] = (0, _buildMoveList2.default)(fileContents[fileName]);
   }
   console.log(testCases);
   console.log("About to start running test cases...");
@@ -105,6 +105,20 @@ console.log("hi");
   alert(err);
   console.log(err);
 });
+
+window.onload = function () {
+  var textArea = document.getElementById("textarea");
+  var outputDiv = document.getElementById("output");
+  document.getElementById("run").addEventListener("click", function () {
+    var input = textArea.value;
+    if (input.length < 7) return writeOutput("Empty input");
+    var game = new _CheckersGame2.default((0, _buildMoveList2.default)(input));
+    writeOutput(game.endState);
+  });
+  function writeOutput(str) {
+    outputDiv.innerText = str;
+  }
+};
 
 /***/ }),
 /* 1 */
@@ -166,10 +180,10 @@ var CheckersGame = function () {
     var endState = this.validateMoves();
     if (endState.valid) {
       this.boardState = endState.boardState;
-      var outcome = this.determineWinner();
-      console.log(outcome);
+      this.endState = this.determineWinner();
+      console.log(this.endState);
     } else {
-      console.log(endState);
+      console.log(this.endState);
     }
   }
 
@@ -342,28 +356,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = buildMoveList;
-function buildMoveList(moveStrList, startPlayer) {
+function buildMoveList(moveStrList) {
   var moves = moveStrList.split('\n');
   var returnVal = [];
-  // if (!startPlayer || startPlayer === 'white'){
-  //   moves.forEach(moveStr=>{
-  //     if (moveStr.length < 2) return;
-  //     let squares = moveStr.split(',');
-  //     returnVal.push({
-  //       from: {x: squares[0], y: squares[1]},
-  //       to: {x: squares[2], y: squares[3]}
-  //     });
-  //   });
-  //   return returnVal;
-  // }
-  // moves.forEach(moveStr=>{
-  //   if (moveStr.length < 2) return;
-  //   let squares = moveStr.split(',');
-  //   returnVal.push({
-  //     from: {x: 7-squares[0], y: 7-squares[1]},
-  //     to: {x: 7-squares[2], y: 7-squares[3]}
-  //   });
-  // });
   moves.forEach(function (moveStr) {
     if (moveStr.length < 2) return;
     var squares = moveStr.split(',');

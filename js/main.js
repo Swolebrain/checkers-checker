@@ -8,7 +8,7 @@ console.log("hi");
 preLoader()
 .then(fileContents=>{
   for (let fileName in fileContents){
-    testCases[fileName] = buildMoveList(fileContents[fileName], "black");
+    testCases[fileName] = buildMoveList(fileContents[fileName]);
   }
   console.log(testCases);
   console.log("About to start running test cases...");
@@ -25,3 +25,17 @@ preLoader()
   alert(err);
   console.log(err);
 });
+
+window.onload = function(){
+  let textArea = document.getElementById("textarea");
+  let outputDiv = document.getElementById("output");
+  document.getElementById("run").addEventListener("click", function(){
+    let input = textArea.value;
+    if (input.length<7) return writeOutput("Empty input");
+    let game = new CheckersGame(buildMoveList(input));
+    writeOutput(game.endState);
+  });
+  function writeOutput(str){
+    outputDiv.innerText = str;
+  }
+}

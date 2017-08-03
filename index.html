@@ -5,9 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Checkers Checker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+  <style>
+    textarea{
+      width: 50%;
+      min-height: 300px;
+    }
+    .flex-container{
+      display:flex;
+      width:100%;
+      min-height: 400px;
+      flex-direction: row;
+    }
+    .flex-container>div{
+      display:flex;
+      flex-direction: column;
+      flex:1;
+    }
+    .btn{
+      display: block;
+      width: 100px;
+      margin: 2rem auto 0 auto;
+    }
+  </style>
 </head>
 <body>
   <h1>Checkers Checker</h1>
+  <div class="flex-container">
+    <div class="textarea-container">
+      <h4>Put your input here:</h4>
+      <textarea id="textarea" cols="10" rows="20"></textarea>
+    </div>
+    <div>
+      <h4>Output:</h4>
+      <div id="output"></div>
+    </div>
+  </div>
+  <button class="btn" id="run">Run Game</button>
   <script src="dist/app.bundle.js"></script>
 </body>
 </html>

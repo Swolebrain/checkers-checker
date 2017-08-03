@@ -8,11 +8,11 @@ export default class CheckersGame{
     let endState = this.validateMoves();
     if (endState.valid){
       this.boardState = endState.boardState;
-      let outcome = this.determineWinner();
-      console.log(outcome);
+      this.endState = this.determineWinner();
+      console.log(this.endState);
     }
     else{
-      console.log(endState);
+      console.log(this.endState);
     }
   }
   initializeBoard(){
