@@ -15,7 +15,6 @@ export default function preLoader(){
         return res.text();
       })
       .then(fileContent=>{
-        console.log("Loaded:", fileContent);
         fileContents[fileName] = fileContent;
         //if this is the last file, resolve promise
         if (++numResolved === files.length){
