@@ -2,8 +2,9 @@ import preLoader from './preLoader';
 import CheckersGame from './CheckersGame';
 
 let testCases;
+console.log("hi");
 
-preloader()
+preLoader()
 .then(fileContents=>{
   testCases = fileContents;
 })

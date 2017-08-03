@@ -1,4 +1,4 @@
-export default function(){
+export default function preLoader(){
   return new Promise((resolve, reject)=>{
     let files = [
       'black.txt',
