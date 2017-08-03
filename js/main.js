@@ -11,7 +11,15 @@ preLoader()
     testCases[fileName] = buildMoveList(fileContents[fileName], "black");
   }
   console.log(testCases);
+  console.log("About to start running test cases...");
+  console.log("Running game: black.txt");
   let game1 = new CheckersGame(testCases["black.txt"]);
+  console.log("Running game: white.txt");
+  let game2 = new CheckersGame(testCases["white.txt"]);
+  console.log("Running game: incomplete.txt");
+  let game3 = new CheckersGame(testCases["incomplete.txt"]);
+  console.log("Running game: illegal_move.txt");
+  let game4 = new CheckersGame(testCases["illegal_move.txt"]);
 })
 .catch(err=>{
   alert(err);

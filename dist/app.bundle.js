@@ -92,7 +92,15 @@ console.log("hi");
     testCases[fileName] = (0, _buildMoveList2.default)(fileContents[fileName], "black");
   }
   console.log(testCases);
+  console.log("About to start running test cases...");
+  console.log("Running game: black.txt");
   var game1 = new _CheckersGame2.default(testCases["black.txt"]);
+  console.log("Running game: white.txt");
+  var game2 = new _CheckersGame2.default(testCases["white.txt"]);
+  console.log("Running game: incomplete.txt");
+  var game3 = new _CheckersGame2.default(testCases["incomplete.txt"]);
+  console.log("Running game: illegal_move.txt");
+  var game4 = new _CheckersGame2.default(testCases["illegal_move.txt"]);
 }).catch(function (err) {
   alert(err);
   console.log(err);
@@ -152,11 +160,16 @@ var CheckersGame = function () {
 
     this.movesList = movesList;
     this.boardState = this.initializeBoard();
+    this.startingPiece = this.boardState[movesList[0].from.y][movesList[0].from.x];
+    if (this.startingPiece != "b" && this.startingPiece != "w") throw "Illegal starting piece";
+
     var endState = this.validateMoves();
     if (endState.valid) {
       this.boardState = endState.boardState;
       var outcome = this.determineWinner();
       console.log(outcome);
+    } else {
+      console.log(endState);
     }
   }
 
@@ -181,8 +194,8 @@ var CheckersGame = function () {
         });
       });
       state = JSON.parse(JSON.stringify(state));
-      this.printBoard(state);
-      console.log("initialized.");
+      // this.printBoard(state);
+      // console.log("initialized.");
       return state;
     }
   }, {
@@ -196,17 +209,15 @@ var CheckersGame = function () {
   }, {
     key: "validateMoves",
     value: function validateMoves() {
-      var _this = this;
-
       //deep clone board state:
       var currentState = JSON.parse(JSON.stringify(this.boardState));
-      console.log("currentState");
-      this.printBoard();
+      // console.log("currentState");
+      // this.printBoard();
       var invalidMove = null;
       this.movesList.forEach(function (move, idx) {
         var moveStr = move.from.x + "," + move.from.y + "->" + move.to.x + "," + move.to.y;
         if (invalidMove) return; //bias towards first invalid move
-        console.log(moveStr);
+        // console.log(moveStr);
         if (move.from.x < 0 || move.from.x > 7) invalidMove = "Line " + (idx + 1) + " illegal move: " + moveStr + " - bad starting x coord";
         if (move.from.y < 0 || move.from.y > 7) invalidMove = "Line " + (idx + 1) + " illegal move: " + moveStr + " - bad starting y coord";
         if (move.to.x < 0 || move.to.x > 7) invalidMove = "Line " + (idx + 1) + " illegal move: " + moveStr + " - bad ending x coord";
@@ -227,13 +238,13 @@ var CheckersGame = function () {
           opponentColor = "w";
         }
 
-        if (currentState[move.from.y + moveDirY][move.from.x - 1] === opponentColor && currentState[move.from.y + 2 * moveDirY][move.from.x - 2] === "") {
-          console.log("can jump left");
+        if (currentState[move.from.y + 2 * moveDirY] && currentState[move.from.y + moveDirY][move.from.x - 1] === opponentColor && currentState[move.from.y + 2 * moveDirY][move.from.x - 2] === "") {
+          // console.log("can jump left");
           canJump = "left";
           moveDirY *= 2;
           moveDirX = -2;
-        } else if (currentState[move.from.y + moveDirY][move.from.x + 1] === opponentColor && currentState[move.from.y + 2 * moveDirY][move.from.x + 2] === "") {
-          console.log("can jump right");
+        } else if (currentState[move.from.y + 2 * moveDirY] && currentState[move.from.y + moveDirY][move.from.x + 1] === opponentColor && currentState[move.from.y + 2 * moveDirY][move.from.x + 2] === "") {
+          // console.log("can jump right");
           canJump = "right";
           moveDirY *= 2;
           moveDirX = 2;
@@ -244,13 +255,14 @@ var CheckersGame = function () {
             invalidMove = "Line " + (idx + 1) + " illegal move: " + moveStr + " - can jump but didn't. MoveDir=" + moveDirX + "," + moveDirY;
             return;
           }
-          console.log("can jump, not invalid");
+          // console.log("can jump, not invalid");
           //eat the jumped piece
           currentState[move.from.y + moveDirY / 2][move.from.x + moveDirX / 2] = "";
         } else {
-          console.log("cant jump");
+          // console.log("cant jump");
           //make sure the move is diagonal
           if (move.to.y != move.from.y + moveDirY || move.to.x != move.from.x - 1 && move.to.x != move.from.x + 1) {
+            console.log(move.from.y + moveDirY, move.from.x - 1, move.from.x + 1);
             invalidMove = "Line " + (idx + 1) + " illegal move: " + moveStr + " - cant jump but didn't take single-square diagonal move";
             return;
           }
@@ -258,21 +270,21 @@ var CheckersGame = function () {
         //we made it here so move was valid, update current state by moving piece
         currentState[move.to.y][move.to.x] = currentState[move.from.y][move.from.x];
         currentState[move.from.y][move.from.x] = "";
-        _this.printBoard(currentState);
+        // this.printBoard(currentState);
       });
       return invalidMove ? invalidMove : { valid: true, boardState: currentState };
     }
   }, {
     key: "determineWinner",
     value: function determineWinner() {
-      var _this2 = this;
+      var _this = this;
 
       var hasValidMovesLeft = this.boardState.reduce(function (acc, row, rowIdx) {
         return acc || row.reduce(function (accum, cell, colIdx) {
-          return accum || _this2.hasValidMove(rowIdx, colIdx);
+          return accum || _this.hasValidMove(rowIdx, colIdx);
         }, false);
       }, false);
-      console.log("has valid moves:", hasValidMovesLeft);
+      // console.log("has valid moves:", hasValidMovesLeft);
       var blackPieces = this.boardState.reduce(function (acc, row) {
         return acc + row.filter(function (cell) {
           return cell === "b";
@@ -284,16 +296,18 @@ var CheckersGame = function () {
         }).length;
       }, 0);
       if (hasValidMovesLeft && blackPieces > 0 && whitePieces > 0) {
-        console.log("Game unfinished!!");
-        return "game unfinished";
+        return "incomplete game";
       }
-      if (blackPieces === whitePieces) return "draw!";else if (blackPieces > whitePieces) return "black wins!";else return "white wins";
+
+      if (blackPieces === whitePieces) return "draw!";else if (blackPieces > whitePieces) return this.startingPiece === "b" ? "first" : "second";else return this.startingPiece === "w" ? "first" : "second";
     }
   }, {
     key: "hasValidMove",
     value: function hasValidMove(row, col) {
       var color = this.boardState[row][col];
       if (color === "") return false;
+      if (color === "w" && row === 7) return false;
+      if (color === "b" && row === 0) return false;
       var opponentColor = color === "w" ? "b" : "w";
 
       var moveDirY = 1;
@@ -331,23 +345,31 @@ exports.default = buildMoveList;
 function buildMoveList(moveStrList, startPlayer) {
   var moves = moveStrList.split('\n');
   var returnVal = [];
-  if (!startPlayer || startPlayer === 'white') {
-    moves.forEach(function (moveStr) {
-      if (moveStr.length < 2) return;
-      var squares = moveStr.split(',');
-      returnVal.push({
-        from: { x: squares[0], y: squares[1] },
-        to: { x: squares[2], y: squares[3] }
-      });
-    });
-    return returnVal;
-  }
+  // if (!startPlayer || startPlayer === 'white'){
+  //   moves.forEach(moveStr=>{
+  //     if (moveStr.length < 2) return;
+  //     let squares = moveStr.split(',');
+  //     returnVal.push({
+  //       from: {x: squares[0], y: squares[1]},
+  //       to: {x: squares[2], y: squares[3]}
+  //     });
+  //   });
+  //   return returnVal;
+  // }
+  // moves.forEach(moveStr=>{
+  //   if (moveStr.length < 2) return;
+  //   let squares = moveStr.split(',');
+  //   returnVal.push({
+  //     from: {x: 7-squares[0], y: 7-squares[1]},
+  //     to: {x: 7-squares[2], y: 7-squares[3]}
+  //   });
+  // });
   moves.forEach(function (moveStr) {
     if (moveStr.length < 2) return;
     var squares = moveStr.split(',');
     returnVal.push({
-      from: { x: 7 - squares[0], y: 7 - squares[1] },
-      to: { x: 7 - squares[2], y: 7 - squares[3] }
+      from: { x: Number(squares[0]), y: Number(squares[1]) },
+      to: { x: Number(squares[2]), y: Number(squares[3]) }
     });
   });
 
